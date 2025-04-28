@@ -31,7 +31,7 @@ fn main() {
         std::process::exit(1);
     });
     print_welcome_message();
-    
+
     let table = Table::parse();
 
     let mut count = 0u64;
@@ -47,12 +47,12 @@ fn main() {
                 println!("\nThank you for playing the game!");
                 eprintln!("You completed {} turns in total!", count - 1);
                 return;
-            },
+            }
             Err(ReadlineError::Eof) => {
                 println!("\nThank you for playing the game!");
                 eprintln!("You completed {} turns in total!", count - 1);
                 return;
-            },
+            }
             Err(err) => {
                 eprintln!("An error occurred: {}", err);
                 continue;
@@ -60,12 +60,14 @@ fn main() {
         };
 
         let input_word = input.trim();
-        
+
+        let _ = rl.add_history_entry(input_word);
+
         if input_word == "exit" {
             eprintln!("You completed {} turns in total!", count);
             return;
         }
-        
+
         if !is_valid_japanese(input_word) {
             println!("Please input using hiragana characters only!");
             is_invalid_word = true;
@@ -77,19 +79,25 @@ fn main() {
             is_invalid_word = true;
             continue;
         }
-        
+
         let characters = input_word.chars().collect::<Vec<char>>();
 
         if characters.last().unwrap() == &'ん' {
             eprintln!("Game Over!");
-            eprintln!("You used a word ending with 'ん'. You played with {} words in total!", count);
+            eprintln!(
+                "You used a word ending with 'ん'. You played with {} words in total!",
+                count
+            );
             return;
         }
-        
+
         if count > 1 && !is_invalid_word {
             if previous_word_ending != characters.first().unwrap().clone() {
                 eprintln!("Game Over!");
-                eprintln!("Your word doesn't start with the last character of the previous word. You played with {} words in total!", count);
+                eprintln!(
+                    "Your word doesn't start with the last character of the previous word. You played with {} words in total!",
+                    count
+                );
                 return;
             }
         }
@@ -100,10 +108,13 @@ fn main() {
             let response_chars = res.chars().collect::<Vec<char>>();
             previous_word_ending = response_chars.last().unwrap().clone();
             println!("Computer> {}", res);
-            
+
             if previous_word_ending == 'ん' {
                 eprintln!("You Win!");
-                eprintln!("The computer used a word ending with 'ん'. You played with {} words in total!", count);
+                eprintln!(
+                    "The computer used a word ending with 'ん'. You played with {} words in total!",
+                    count
+                );
                 return;
             }
 
