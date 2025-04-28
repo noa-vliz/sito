@@ -2,7 +2,7 @@ use rand::seq::IndexedRandom;
 
 use crate::parse_json::Table;
 
-pub fn sito<T: AsRef<str>>(word: T, mut table: Table) -> Option<String> {
+pub fn sito<T: AsRef<str>>(word: T, table: Table) -> Option<String> {
     let word = word.as_ref();
 
     let chars = word.trim().chars().collect::<Vec<char>>();
@@ -13,68 +13,66 @@ pub fn sito<T: AsRef<str>>(word: T, mut table: Table) -> Option<String> {
 
     let last_word = chars.last().unwrap();
 
-    let mut word_table = None;
+    let word_table = match last_word {
+        'あ' => table.あ,
+        'い' => table.い,
+        'う' => table.う,
+        'え' => table.え,
+        'お' => table.お,
 
-    match last_word {
-        'あ' => word_table = table.あ,
-        'い' => word_table = table.い,
-        'う' => word_table = table.う,
-        'え' => word_table = table.え,
-        'お' => word_table = table.お,
+        'か' => table.か,
+        'き' => table.き,
+        'く' => table.く,
+        'け' => table.け,
+        'こ' => table.こ,
 
-        'か' => word_table = table.か,
-        'き' => word_table = table.き,
-        'く' => word_table = table.く,
-        'け' => word_table = table.け,
-        'こ' => word_table = table.こ,
+        'さ' => table.さ,
+        'し' => table.し,
+        'す' => table.す,
+        'せ' => table.せ,
+        'そ' => table.そ,
 
-        'さ' => word_table = table.さ,
-        'し' => word_table = table.し,
-        'す' => word_table = table.す,
-        'せ' => word_table = table.せ,
-        'そ' => word_table = table.そ,
+        'た' => table.た,
+        'ち' => table.ち,
+        'つ' => table.つ,
+        'て' => table.て,
+        'と' => table.と,
 
-        'た' => word_table = table.た,
-        'ち' => word_table = table.ち,
-        'つ' => word_table = table.つ,
-        'て' => word_table = table.て,
-        'と' => word_table = table.と,
+        'な' => table.な,
+        'に' => table.に,
+        'ぬ' => table.ぬ,
+        'ね' => table.ね,
+        'の' => table.の,
 
-        'な' => word_table = table.な,
-        'に' => word_table = table.に,
-        'ぬ' => word_table = table.ぬ,
-        'ね' => word_table = table.ね,
-        'の' => word_table = table.の,
+        'は' => table.は,
+        'ひ' => table.ひ,
+        'ふ' => table.ふ,
+        'へ' => table.へ,
+        'ほ' => table.ほ,
 
-        'は' => word_table = table.は,
-        'ひ' => word_table = table.ひ,
-        'ふ' => word_table = table.ふ,
-        'へ' => word_table = table.へ,
-        'ほ' => word_table = table.ほ,
+        'ま' => table.ま,
+        'み' => table.み,
+        'む' => table.む,
+        'め' => table.め,
+        'も' => table.も,
 
-        'ま' => word_table = table.ま,
-        'み' => word_table = table.み,
-        'む' => word_table = table.む,
-        'め' => word_table = table.め,
-        'も' => word_table = table.も,
+        'や' => table.や,
+        'ゆ' => table.ゆ,
+        'よ' => table.よ,
 
-        'や' => word_table = table.や,
-        'ゆ' => word_table = table.ゆ,
-        'よ' => word_table = table.よ,
+        'ら' => table.ら,
+        'り' => table.り,
+        'る' => table.る,
+        'れ' => table.れ,
+        'ろ' => table.ろ,
 
-        'ら' => word_table = table.ら,
-        'り' => word_table = table.り,
-        'る' => word_table = table.る,
-        'れ' => word_table = table.れ,
-        'ろ' => word_table = table.ろ,
-
-        'わ' => word_table = table.わ,
+        'わ' => table.わ,
 
         _ => {
             eprintln!("Unknown char: {}", &last_word);
             return None;
         }
-    }
+    };
 
     if word_table.is_none() {
         return None;

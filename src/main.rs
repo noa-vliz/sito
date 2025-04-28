@@ -8,7 +8,7 @@ mod sito;
 fn main() {
     init::init();
 
-    let mut rl = rustyline::DefaultEditor::new().unwrap_or_else(|e| {
+    let mut rl = rustyline::DefaultEditor::new().unwrap_or_else(|_e| {
         eprintln!("Failed to initialize read line!");
         std::process::exit(1);
     });
