@@ -76,5 +76,5 @@ You can edit this file to add more words. The database is organized by the first
 
 ## License
 
-This software under licensed MIT License. Please see [LICENSE](./LICENSE) file
+This software is licensed under the MIT License. See the [LICENSE](./LICENSE) file for details.
 
