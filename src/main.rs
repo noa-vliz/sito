@@ -1,4 +1,5 @@
 use parse_json::Table;
+use rustyline::error::ReadlineError;
 
 mod init;
 mod parse_json;
@@ -18,10 +19,27 @@ fn main() {
     let mut count = 0u64;
 
     let mut last_response_char: char = ' ';
+    let mut unknown = false;
 
     loop {
         count += 1;
-        let input = rl.readline("> ").unwrap();
+        let input = match rl.readline("> ") {
+            Ok(line) => line,
+            Err(ReadlineError::Interrupted) => {
+                println!("\nGame interrupted. Goodbye!");
+                eprintln!("A total of {} times completed!", count - 1);
+                return;
+            },
+            Err(ReadlineError::Eof) => {
+                println!("\nEnd of input. Goodbye!");
+                eprintln!("A total of {} times completed!", count - 1);
+                return;
+            },
+            Err(err) => {
+                eprintln!("Error: {}", err);
+                continue;
+            }
+        };
 
         let trm = input.trim();
 
@@ -38,7 +56,7 @@ fn main() {
             return;
         }
 
-        if count > 1 {
+        if count > 1 && !unknown {
             if last_response_char != ch.first().unwrap().clone() {
                 eprintln!("Finish!");
                 eprintln!("The shiritori game ended on the {}th time!", count);
@@ -58,6 +76,10 @@ fn main() {
                 eprintln!("The shiritori game ended on the {}th time!", count);
                 return;
             }
+
+            unknown = false;
+        } else {
+            unknown = true;
         }
     }
 }
