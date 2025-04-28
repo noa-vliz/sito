@@ -69,14 +69,14 @@ impl Table {
 
         let Ok(content) = fs::read_to_string(&table_file) else {
             eprintln!(
-                "Failed to read table.json! please create {}!",
+                "Failed to read table.json! Please create {}!",
                 table_file.display()
             );
             std::process::exit(1);
         };
 
         let parsed: Table = serde_json::from_str(&content).unwrap_or_else(|e| {
-            eprintln!("Failed to parse {}!", &table_file.display());
+            eprintln!("Failed to parse file: {}!", &table_file.display());
             eprintln!("{e}");
             std::process::exit(1);
         });

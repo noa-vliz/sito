@@ -69,7 +69,7 @@ pub fn sito<T: AsRef<str>>(word: T, table: Table) -> Option<String> {
         'わ' => table.わ,
 
         _ => {
-            eprintln!("Unknown char: {}", &last_word);
+            eprintln!("Sorry, I don't know any words starting with '{}'...", &last_word);
             return None;
         }
     };

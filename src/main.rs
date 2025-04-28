@@ -6,80 +6,110 @@ mod parse_json;
 mod paths;
 mod sito;
 
+fn print_welcome_message() {
+    println!("=== Welcome to the Shiritori Game! ===");
+    println!("Rules:");
+    println!("- Input a word that starts with the last character of the previous word");
+    println!("- If you use a word ending with 'ん', you lose");
+    println!("- Type 'exit' to end the game");
+    println!("- The first word can be anything you like!");
+    println!("Let's begin!\n");
+}
+
+fn is_valid_japanese(input: &str) -> bool {
+    input.chars().all(|c| match c {
+        'あ'..='ん' => true,
+        _ => false,
+    })
+}
+
 fn main() {
     init::init();
 
     let mut rl = rustyline::DefaultEditor::new().unwrap_or_else(|_e| {
-        eprintln!("Failed to initialize read line!");
+        eprintln!("Could not initialize the input handler");
         std::process::exit(1);
     });
-
+    print_welcome_message();
+    
     let table = Table::parse();
 
     let mut count = 0u64;
 
-    let mut last_response_char: char = ' ';
-    let mut unknown = false;
+    let mut previous_word_ending: char = ' ';
+    let mut is_invalid_word = false;
 
     loop {
         count += 1;
-        let input = match rl.readline("> ") {
+        let input = match rl.readline("You> ") {
             Ok(line) => line,
             Err(ReadlineError::Interrupted) => {
-                println!("\nGame interrupted. Goodbye!");
-                eprintln!("A total of {} times completed!", count - 1);
+                println!("\nThank you for playing the game!");
+                eprintln!("You completed {} turns in total!", count - 1);
                 return;
             },
             Err(ReadlineError::Eof) => {
-                println!("\nEnd of input. Goodbye!");
-                eprintln!("A total of {} times completed!", count - 1);
+                println!("\nThank you for playing the game!");
+                eprintln!("You completed {} turns in total!", count - 1);
                 return;
             },
             Err(err) => {
-                eprintln!("Error: {}", err);
+                eprintln!("An error occurred: {}", err);
                 continue;
             }
         };
 
-        let trm = input.trim();
-
-        if trm == "exit" {
-            eprintln!("A total of {} times completed!", count);
+        let input_word = input.trim();
+        
+        if input_word == "exit" {
+            eprintln!("You completed {} turns in total!", count);
             return;
         }
-
-        let ch = trm.chars().collect::<Vec<char>>();
-
-        if ch.last().unwrap() == &'ん' {
-            eprintln!("Finish!");
-            eprintln!("The shiritori game ended on the {}th time!", count);
-            return;
+        
+        if !is_valid_japanese(input_word) {
+            println!("Please input using hiragana characters only!");
+            is_invalid_word = true;
+            continue;
         }
 
-        if count > 1 && !unknown {
-            if last_response_char != ch.first().unwrap().clone() {
-                eprintln!("Finish!");
-                eprintln!("The shiritori game ended on the {}th time!", count);
+        if input_word.len() < 2 {
+            println!("Please enter a word with at least 2 characters!");
+            is_invalid_word = true;
+            continue;
+        }
+        
+        let characters = input_word.chars().collect::<Vec<char>>();
+
+        if characters.last().unwrap() == &'ん' {
+            eprintln!("Game Over!");
+            eprintln!("You used a word ending with 'ん'. You played with {} words in total!", count);
+            return;
+        }
+        
+        if count > 1 && !is_invalid_word {
+            if previous_word_ending != characters.first().unwrap().clone() {
+                eprintln!("Game Over!");
+                eprintln!("Your word doesn't start with the last character of the previous word. You played with {} words in total!", count);
                 return;
             }
         }
 
-        let response = sito::sito(trm, table.clone());
+        let response = sito::sito(input_word, table.clone());
 
         if let Some(res) = response {
-            let bind = res.chars().collect::<Vec<char>>();
-            last_response_char = bind.last().unwrap().clone();
-            println!("{}", res);
-
-            if last_response_char == 'ん' {
-                eprintln!("Finish!");
-                eprintln!("The shiritori game ended on the {}th time!", count);
+            let response_chars = res.chars().collect::<Vec<char>>();
+            previous_word_ending = response_chars.last().unwrap().clone();
+            println!("Computer> {}", res);
+            
+            if previous_word_ending == 'ん' {
+                eprintln!("You Win!");
+                eprintln!("The computer used a word ending with 'ん'. You played with {} words in total!", count);
                 return;
             }
 
-            unknown = false;
+            is_invalid_word = false;
         } else {
-            unknown = true;
+            is_invalid_word = true;
         }
     }
 }

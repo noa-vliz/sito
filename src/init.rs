@@ -21,7 +21,7 @@ pub fn init() {
                 eprintln!("\x1b[33;1mCreated\x1b[0;1m {}", &table_path.display());
             } else {
                 eprintln!(
-                    "\x1b[31;1mFailed\x1b[0;1m Failed to create {}",
+                    "\x1b[31;1m\x1b[0;1m Could not create configuration file: {}",
                     &table_path.display()
                 );
             }
